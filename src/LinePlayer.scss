@@ -299,6 +299,17 @@
                 }
             }
 
+            >* {
+                display: inline-block;
+                height: 100%;
+                position: relative;
+            }
+            >*:before {
+                content: "";
+                display: block;
+                overflow: hidden;
+            }
+
             .lineplayer-time,
             .lineplayer-live-badge {
                 line-height: 38px;
@@ -430,10 +441,6 @@
             }
 
             .lineplayer-full {
-                display: inline-block;
-                height: 100%;
-                position: relative;
-
                 &:hover {
                     .lineplayer-full-in-icon {
                         display: block;
@@ -449,11 +456,6 @@
             }
 
             .lineplayer-quality {
-                position: relative;
-                display: inline-block;
-                height: 100%;
-                z-index: 2;
-
                 &:hover {
                     .lineplayer-quality-list {
                         display: block;

@@ -99,9 +99,11 @@ class Template {
                 <div class="lineplayer-quality"></div>
 
                 ${options.screenshot ? `
-                <a href="#" class="lineplayer-icon lineplayer-camera-icon" data-balloon="${tran('Screenshot')}" data-balloon-pos="up">
-                    <span class="lineplayer-icon-content">${icons.get('camera')}</span>
-                </a>
+                <div class="lineplayer-camera">
+                    <button class="lineplayer-icon lineplayer-camera-icon" data-balloon="${tran('Screenshot')}" data-balloon-pos="up">
+                        <span class="lineplayer-icon-content">${icons.get('camera')}</span>
+                    </button>
+                </div>
                 ` : ``}
 
                 <div class="lineplayer-full">
@@ -135,11 +137,10 @@ class Template {
         quality_list += '</div>';
 
         return `
-            <div class="lineplayer-quality">
-                <button class="lineplayer-icon lineplayer-quality-icon">${list[current].name}</button>
-                <div class="lineplayer-quality-mask">
-                    ${quality_list}
-                </div>
+        
+            <button class="lineplayer-icon lineplayer-quality-icon">${list[current].name}</button>
+            <div class="lineplayer-quality-mask">
+                ${quality_list}
             </div>`;
     }
 
