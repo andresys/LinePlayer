@@ -2,15 +2,9 @@
 
 > HTML5 video player for devline server
 
+Based on [DPlayer](https://github.com/MoePlayer/DPlayer) source code
+
 **[Demo](http://lineplayer.js.org/)**
-
-**[Docs](http://lineplayer.js.org/docs)**
-
-## Install
-
-```
-$ npm install lineplayer --save
-```
 
 ## Quick Start
 
@@ -33,10 +27,6 @@ new LinePlayer({
     }
 });
 ```
-
-## Usage
-
-[Read the Docs](http://lineplayer.js.org/docs)
 
 ## Author
 
