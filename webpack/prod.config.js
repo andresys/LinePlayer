@@ -12,7 +12,7 @@ module.exports = {
     devtool: 'source-map',
 
     entry: {
-        'DPlayer': './src/index.js'
+        'LinePlayer': './src/index.js'
     },
 
     output: {
@@ -88,7 +88,7 @@ module.exports = {
 
     plugins: [
         new webpack.DefinePlugin({
-            DPLAYER_VERSION: `"${require('../package.json').version}"`,
+            LINEPLAYER_VERSION: `"${require('../package.json').version}"`,
             GIT_HASH: JSON.stringify(gitRevisionPlugin.version())
         }),
         new webpack.optimize.UglifyJsPlugin({

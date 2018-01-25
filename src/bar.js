@@ -1,10 +1,10 @@
 class Bar {
-    constructor (template) {
+    constructor (player) {
+        this.player = player;
+
         this.elements = {};
-        this.elements.volume = template.volumeBar;
-        this.elements.played = template.playedBar;
-        this.elements.loaded = template.loadedBar;
-        this.elements.danmaku = template.danmakuOpacityBar;
+
+        if (this.player.options.volume) this.elements.volume = this.player.template.volumeBar;
     }
 
     /**

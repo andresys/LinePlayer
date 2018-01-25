@@ -11,15 +11,15 @@ class Events {
         this.playerEvents = [
             'screenshot',
             'thumbnails_show', 'thumbnails_hide',
-            'danmaku_show', 'danmaku_hide', 'danmaku_clear', 'danmaku_loaded', 'danmaku_send',
-            'danmaku_opacity',
             'contextmenu_show', 'contextmenu_hide',
             'notice_show', 'notice_hide',
             'quality_start', 'quality_end',
             'destroy',
             'resize',
-            'fullscreen', 'fullscreen_cancel', 'webfullscreen', 'webfullscreen_cancel',
-            'subtitle_show', 'subtitle_hide', 'subtitle_change'
+            'fullscreen', 'fullscreen_cancel'
+        ];
+        this.serverEvents = [
+            'lineserver_load_start', 'lineserver_load_end'
         ];
     }
 
@@ -46,6 +46,9 @@ class Events {
         }
         else if (this.videoEvents.indexOf(name) !== -1) {
             return 'video';
+        }
+        else if (this.serverEvents.indexOf(name) !== -1) {
+            return 'server';
         }
 
         console.error(`Unknown event name: ${name}`);

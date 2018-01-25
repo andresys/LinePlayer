@@ -16,7 +16,7 @@ class ContextMenu {
     }
 
     show (x, y) {
-        this.player.template.menu.classList.add('dplayer-menu-show');
+        this.player.template.menu.classList.add('lineplayer-menu-show');
 
         const clientRect = this.player.container.getBoundingClientRect();
         if (x + this.player.template.menu.offsetWidth >= clientRect.width) {
@@ -36,14 +36,14 @@ class ContextMenu {
             this.player.template.menu.style.bottom = 'initial';
         }
 
-        this.player.template.mask.classList.add('dplayer-mask-show');
+        this.player.template.mask.classList.add('lineplayer-mask-show');
 
         this.player.events.trigger('contextmenu_show');
     }
 
     hide () {
-        this.player.template.mask.classList.remove('dplayer-mask-show');
-        this.player.template.menu.classList.remove('dplayer-menu-show');
+        this.player.template.mask.classList.remove('lineplayer-mask-show');
+        this.player.template.menu.classList.remove('lineplayer-menu-show');
 
         this.player.events.trigger('contextmenu_hide');
     }

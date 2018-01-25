@@ -1,9 +1,9 @@
 {
-  "name": "dplayer",
-  "version": "1.17.4",
-  "description": "Wow, such a lovely HTML5 danmaku video player",
-  "main": "dist/DPlayer.min.js",
-  "style": "dist/DPlayer.min.css",
+  "name": "lineplayer",
+  "version": "1.0.0-beta",
+  "description": "HTML5 video player for devline server",
+  "main": "dist/LinePlayer.min.js",
+  "style": "dist/LinePlayer.min.css",
   "scripts": {
     "start": "npm run dev",
     "build": "cross-env NODE_ENV=production webpack --config webpack/prod.config.js --progress --display-error-details --colors",
@@ -14,21 +14,21 @@
     "dist"
   ],
   "repository": {
-    "url": "git+https://github.com/DIYgod/DPlayer.git",
+    "url": "git+https://github.com/andresys/LinePlayer.git",
     "type": "git"
   },
   "keywords": [
     "player",
-    "danmaku",
+    "devline",
     "video",
     "html5"
   ],
-  "author": "DIYgod",
+  "author": "andresys",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/DIYgod/DPlayer/issues"
+    "url": "https://github.com/andresys/LinePlayer/issues"
   },
-  "homepage": "https://github.com/DIYgod/DPlayer#readme",
+  "homepage": "http://lineplayer.js.org",
   "devDependencies": {
     "autoprefixer": "^7.1.6",
     "babel-core": "^6.26.0",
@@ -37,7 +37,12 @@
     "cross-env": "^5.1.1",
     "css-loader": "^0.28.7",
     "eslint": "^4.12.1",
+    "eslint-config-standard": "^11.0.0-beta.0",
     "eslint-loader": "^1.9.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
     "exports-loader": "^0.6.4",
     "extract-text-webpack-plugin": "^3.0.2",
     "file-loader": "^1.1.5",

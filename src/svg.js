@@ -1,5 +1,5 @@
 /**
-* SVG used by DPlayer
+* SVG used by LinePlayer
 */
 
 class SvgSource {
@@ -15,7 +15,7 @@ class SvgSource {
 
         return `
             <svg xmlns="http://www.w3.org/2000/svg" width="${this.icons[type][2] || '100%'}" height="${this.icons[type][2] || '100%'}" version="1.1" viewBox="${this.icons[type][0]}">
-                <path class="dplayer-fill" style="fill:${this.iconColor}" d="${this.icons[type][1]}" id="dplayer-${type}"></path>
+                <path class="lineplayer-fill" style="fill:${this.iconColor}" d="${this.icons[type][1]}" id="lineplayer-${type}"></path>
             </svg>
         `;
     }

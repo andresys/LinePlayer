@@ -1,19 +1,6 @@
 module.exports = {
 
     /**
-    * Parse second to 00:00 format
-    *
-    * @param {Number} second
-    * @return {String} 00:00 format
-    */
-    secondToTime: (second) => {
-        const add0 = (num) => num < 10 ? '0' + num : '' + num;
-        const min = parseInt(second / 60);
-        const sec = parseInt(second - min * 60);
-        return add0(min) + ':' + add0(sec);
-    },
-
-    /**
      * control play progress
      */
     // get element's view position
@@ -36,6 +23,20 @@ module.exports = {
         return actualLeft - elementScrollLeft;
     },
 
+    fullHeight: (obj) => {
+        var compstyle=(typeof window.getComputedStyle==='undefined') ? obj.currentStyle : window.getComputedStyle(obj);
+        var marginTop = parseInt(compstyle.marginTop);
+        var marginBottom = parseInt(compstyle.marginBottom);
+        var paddingTop = parseInt(compstyle.paddingTop);
+        var paddingBottom = parseInt(compstyle.paddingBottom);
+        var borderTopWidth = parseInt(compstyle.borderTopWidth);
+        var borderBottomWidth = parseInt(compstyle.borderBottomWidth);
+        return obj.offsetHeight +
+             (isNaN(marginTop) ? 0 : marginTop) + (isNaN(marginBottom) ? 0 : marginBottom) +
+             (isNaN(paddingTop) ? 0 : paddingTop) + (isNaN(paddingBottom) ? 0 : paddingBottom) +
+             (isNaN(borderTopWidth) ? 0 : borderTopWidth) + (isNaN(borderBottomWidth) ? 0 : borderBottomWidth);
+    },
+
     getScrollPosition () {
         return {
             left: window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft || 0,
@@ -50,6 +51,39 @@ module.exports = {
         }
         else {
             window.scrollTo(left, top);
+        }
+    },
+
+    extendArray (array, extend) {
+        for (var key in extend) {
+            if (extend.hasOwnProperty(key)) {
+                if (typeof array[key] === 'object') {
+                    array[key] = this.extendArray(array[key], extend[key]);
+                }
+                else array[key] = extend[key];
+            }
+        }
+        return array;
+    },
+
+    currentDateTime () {
+        var now = new Date();
+        return `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+    },
+
+    saveAs (uri, filename) {
+        var link = document.createElement('a');
+        if (typeof link.download === 'string') {
+            link.href = uri;
+            link.download = filename;
+            //Firefox requires the link to be in the body
+            document.body.appendChild(link);
+            //simulate click
+            link.click();
+            //remove the link when done
+            document.body.removeChild(link);
+        } else {
+            window.open(uri);
         }
     },
 
@@ -68,20 +102,6 @@ module.exports = {
         },
 
         get: (key) => localStorage.getItem(key)
-    },
-
-    cumulativeOffset: (element) => {
-        let top = 0, left = 0;
-        do {
-            top += element.offsetTop || 0;
-            left += element.offsetLeft || 0;
-            element = element.offsetParent;
-        } while (element);
-
-        return {
-            top: top,
-            left: left
-        };
     }
 
 };

@@ -13,16 +13,6 @@ class HotKey {
                             event.preventDefault();
                             player.toggle();
                             break;
-                        case 37:
-                            event.preventDefault();
-                            player.seek(player.video.currentTime - 5);
-                            player.controller.setAutoHide();
-                            break;
-                        case 39:
-                            event.preventDefault();
-                            player.seek(player.video.currentTime + 5);
-                            player.controller.setAutoHide();
-                            break;
                         case 38:
                             event.preventDefault();
                             percentage = player.volume() + 0.1;
