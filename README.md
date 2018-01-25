@@ -40,5 +40,4 @@ new LinePlayer({
 
 ## Author
 
-**LinePlayer** © [andresys](https://github.com/andresys), Released under the [MIT](./LICENSE) License.<br>
-Authored and maintained by DIYgod with help from contributors ([list](https://github.com/andresys/LinePlayer/contributors)).
+**LinePlayer** © [andresys](https://github.com/andresys), Released under the [MIT](./LICENSE) License.
