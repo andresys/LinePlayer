@@ -1,6 +1,6 @@
 {
   "name": "lineplayer",
-  "version": "1.0.0-beta",
+  "version": "1.0.0-beta2",
   "description": "HTML5 video player for devline server",
   "main": "dist/LinePlayer.min.js",
   "style": "dist/LinePlayer.min.css",
