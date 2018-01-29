@@ -9,6 +9,8 @@ function initPlayers () {
         screenshot: true,
         line: {
             host: 'line.adm.tver.ru',
+            proto: 'https://',
+            port: 443,
             user: 'web',
             password: 'web'
         }
