@@ -52,7 +52,7 @@ class LineServer {
     }
 
     makeurl (path = '/cameras', additional_params = {}) {
-        var address = `${this.options.line.proto}${this.options.line.host}:${this.options.line.port}`;
+        var address = `${this.options.line.proto}${this.options.line.host}${this.options.line.port ? ':' + this.options.line.port : ''}`;
         var params = utils.extendArray({authorization: `Basic ${btoa(`${this.options.line.user}:${this.options.line.password}`)}`}, additional_params);
 
         var url_params = [];

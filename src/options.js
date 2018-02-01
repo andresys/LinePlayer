@@ -17,12 +17,12 @@ module.exports = (options) => {
         hotkey: true,
         volume: 0.7,
         line: {
-            proto: 'http://',
-            port: 9786,
+            proto: '//',
             user: 'web'
         },
         icons: icons(),
         iconsColor: '#ffffff',
+        iconDisableColor: '#a0a0a0',
         contextmenu: [],
         mutex: true
     };
@@ -49,15 +49,7 @@ module.exports = (options) => {
     options.contextmenu = options.contextmenu.concat([
         {
             text: 'About LinePlayer',
-            link: 'https://github.com/andresys/LinePlayer'
-        },
-        {
-            text: 'LinePlayer feedback',
-            link: 'https://github.com/andresys/LinePlayer/issues'
-        },
-        {
-            text: `LinePlayer ${LINEPLAYER_VERSION} ${GIT_HASH}`,
-            link: 'https://github.com/andresys/LinePlayer/releases'
+            link: 'https://andresys.github.io/LinePlayer/'
         }
     ]);
 

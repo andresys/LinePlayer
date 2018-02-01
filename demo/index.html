@@ -18,10 +18,10 @@
     <div class="highlight highlight-middle highlight-html">
         <pre>
             <code class="xml">
-&lt;link rel=&quot;stylesheet&quot; href=&quot;LinePlayer.min.css&quot;&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;//cdn.jsdelivr.net/npm/lineplayer/dist/LinePlayer.min.css&quot;&gt;
 &lt;div id=&quot;lineplayer&quot;&gt;&lt;/div&gt;
 &lt;script src=&quot;//cdn.jsdelivr.net/npm/hls.js/dist/hls.min.js&quot;&gt;&lt;/script&gt;
-&lt;script src=&quot;LinePlayer.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;//cdn.jsdelivr.net/npm/lineplayer/dist/LinePlayer.min.js&quot;&gt;&lt;/script&gt;
             </code>
         </pre>
     </div>
@@ -30,10 +30,7 @@
             <code class="js">
 new LinePlayer({
     container: document.getElementById('lineplayer'),
-    lang: 'ru-ru',
-    autoplay: true,
     volume: false,
-    logo: 'gerb.png',
     screenshot: true,
     line: {
         host: 'line.adm.tver.ru',
@@ -46,7 +43,7 @@ new LinePlayer({
     </div>
 
     <script src="//cdn.jsdelivr.net/npm/hls.js/dist/hls.min.js"></script>
-    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/highlight.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/highlightjs/highlight.pack.min.js"></script>
     <script src="LinePlayer.js"></script>
     <script src="demo.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>

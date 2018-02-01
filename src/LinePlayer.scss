@@ -1,5 +1,3 @@
-@import '../node_modules/balloon-css/balloon.css';
-
 .lineplayer {
     position: relative;
     overflow: hidden;
@@ -51,6 +49,12 @@
         .lineplayer-bezel .lineplayer-danloading {
             display: block;
         }
+        .lineplayer-camera,
+        .lineplayer-title,
+        .lineplayer-play,
+        .lineplayer-live {
+            display: none !important;        
+        }
     }
 
     &.lineplayer-hide-controller {
@@ -92,11 +96,6 @@
         .lineplayer-volume,
         .lineplayer-camera-icon {
             display: none !important;
-        }
-
-        .lineplayer-full-in-icon {
-            position: static !important;
-            display: inline-block !important;
         }
 
         .lineplayer-controller .lineplayer-icons .lineplayer-comment .lineplayer-comment-box .lineplayer-comment-input {
@@ -277,7 +276,6 @@
         left: 0;
         right: 0;
         height: 41px;
-        padding: 0 20px;
         user-select: none;
         transition: all 0.3s ease;
 
@@ -285,14 +283,19 @@
             height: 38px;
             position: absolute;
             bottom: 0;
+            margin: 0;
+            padding: 0;
+            font-size: 0;
 
             &.lineplayer-icons-left {
+                left: 5px;
+
                 .lineplayer-icon {
                     padding: 7px;
                 }
             }
             &.lineplayer-icons-right {
-                right: 20px;
+                right: 5px;
 
                 .lineplayer-icon {
                     padding: 8px;
@@ -303,6 +306,68 @@
                 display: inline-block;
                 height: 100%;
                 position: relative;
+                margin: 0;
+                padding: 0;
+
+                &:hover {
+                    .lineplayer-button-mask {
+                        pointer-events: inherit;
+                    }
+                    .lineplayer-button-panel {
+                        opacity: 1;
+                        transform: translate(-50%, 0);
+                    }
+                }
+
+                .lineplayer-button-mask {
+                    pointer-events: none;
+                    position: absolute;
+                    bottom: 100%;
+                    left: 50%;
+                    min-width: 40px;
+                    max-width: 200px;
+                }
+
+                .lineplayer-button-panel {
+                    opacity: 0;
+                    font-size: 12px;
+                    border-radius: 4px;
+                    background: rgba(17, 17, 17, 0.7);
+                    padding: 5px;
+                    transition: all 0.3s ease-in-out;
+                    transform: translate(-50%, 10px);
+                    transform-origin: top;
+                    overflow: hidden;
+                    color: #fff;
+                    text-align: center;
+
+                    span:first-child {
+                        white-space: nowrap;
+                        overflow: hidden;
+                    }
+                }
+
+                .lineplayer-button-prev-panel,
+                .lineplayer-button-next-panel {
+                    width: 100px;
+                    padding: 0 5px;
+
+                    span {
+                        margin: 5px 0;
+                        display: block;
+                    }
+                }
+
+                .lineplayer-quality-item {
+                    height: 25px;
+                    box-sizing: border-box;
+                    cursor: pointer;
+                    line-height: 25px;
+
+                    &:hover {
+                        background-color: rgba(255,255,255,.1);
+                    }
+                }
             }
             >*:before {
                 content: "";
@@ -310,7 +375,6 @@
                 overflow: hidden;
             }
 
-            .lineplayer-time,
             .lineplayer-live-badge {
                 line-height: 38px;
                 color: #eee;
@@ -339,6 +403,7 @@
                 background-color: transparent;
                 outline: none;
                 cursor: pointer;
+                color: #fff;
                 vertical-align: middle;
                 box-sizing: border-box;
                 display: inline-block;
@@ -352,21 +417,6 @@
                     .lineplayer-icon-content {
                         opacity: 1;
                     }
-                }
-
-                &.lineplayer-quality-icon {
-                    color: #fff;
-                    width: auto;
-                    //line-height: 22px;
-                    //font-size: 14px;
-                }
-
-                &.lineplayer-comment-icon {
-                    padding: 10px 9px 9px;
-                }
-
-                &.lineplayer-setting-icon {
-                    padding-top: 8.5px;
                 }
 
                 &.lineplayer-volume-icon {
@@ -440,60 +490,30 @@
                 }
             }
 
-            .lineplayer-full {
+            .lineplayer-play {
                 &:hover {
-                    .lineplayer-full-in-icon {
-                        display: block;
+                    .lineplayer-button-panel {
+                        transform: translate(0, 0);
                     }
                 }
-
-                .lineplayer-full-in-icon {
-                    position: absolute;
-                    top: -30px;
-                    z-index: 1;
-                    display: none;
+                .lineplayer-button-mask {
+                    left: 0;
+                }
+                .lineplayer-button-panel {
+                    transform: translate(0, 10px);
                 }
             }
-
-            .lineplayer-quality {
+            .lineplayer-full {
                 &:hover {
-                    .lineplayer-quality-list {
-                        display: block;
-                    }
-                    .lineplayer-quality-mask {
-                        display: block;
+                    .lineplayer-button-panel {
+                        transform: translate(-100%, 0);
                     }
                 }
-
-                .lineplayer-quality-mask {
-                    display: none;
-                    position: absolute;
-                    bottom: 38px;
-                    left: -2px;
+                .lineplayer-button-mask {
+                    left: 100%;
                 }
-
-                .lineplayer-quality-list {
-                    display: none;
-                    font-size: 12px;
-                    width: 40px;
-                    border-radius: 2px;
-                    background: rgba(28, 28, 28, 0.9);
-                    padding: 5px 0;
-                    transition: all .3s ease-in-out;
-                    overflow: hidden;
-                    color: #fff;
-                    text-align: center;
-                }
-
-                .lineplayer-quality-item {
-                    height: 25px;
-                    box-sizing: border-box;
-                    cursor: pointer;
-                    line-height: 25px;
-
-                    &:hover {
-                        background-color: rgba(255,255,255,.1);
-                    }
+                .lineplayer-button-panel {
+                    transform: translate(-100%, 10px);
                 }
             }
 

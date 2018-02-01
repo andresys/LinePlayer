@@ -7,62 +7,62 @@ class Controller {
 
         this.autoHideTimer = 0;
         if (!isMobile) {
-            this.player.container.addEventListener('mousemove', () => {
-                this.setAutoHide();
-            });
-            this.player.container.addEventListener('click', () => {
-                this.setAutoHide();
-            });
-            this.player.template.controller.addEventListener('mouseenter', () => {
-                this.disableAutoHide = true;
-            });
-            this.player.template.controller.addEventListener('mouseleave', () => {
-                this.disableAutoHide = false;
-            });
-            this.player.template.controllerMask.addEventListener('mouseenter', () => {
-                this.disableAutoHide = true;
-            });
-            this.player.template.controllerMask.addEventListener('mouseleave', () => {
-                this.disableAutoHide = false;
-            });
-            this.player.template.mask.addEventListener('mouseenter', () => {
-                this.disableAutoHide = true;
-            });
+            this.player.container.addEventListener('mousemove', () => { this.setAutoHide(); });
+            this.player.container.addEventListener('click', () => { this.setAutoHide(); });
+            this.player.template.controller.addEventListener('mouseenter', () => { this.disableAutoHide = true; });
+            this.player.template.controller.addEventListener('mouseleave', () => { this.disableAutoHide = false; });
+            this.player.template.controllerMask.addEventListener('mouseenter', () => { this.disableAutoHide = true; });
+            this.player.template.controllerMask.addEventListener('mouseleave', () => { this.disableAutoHide = false; });
+            this.player.template.mask.addEventListener('mouseenter', () => { this.disableAutoHide = true; });
+            this.player.template.videoWrap.addEventListener('click', () => { this.player.toggle(); });
+            this.player.template.controllerMask.addEventListener('click', () => { this.player.toggle(); });
+        }
+        else {
+            this.player.template.videoWrap.addEventListener('click', () => { this.toggle(); });
+            this.player.template.controllerMask.addEventListener('click', () => { this.toggle(); });
         }
 
         this.initPlayButton();
-        this.initFullButton();
         this.initVolumeButton();
         this.initScreenshotButton();
+        this.initFullButton();
     }
 
-    initPlayButton () {
-        this.player.template.playButton.addEventListener('click', () => {
+    initPlayButton (name = 'Play', icon = 'play') {
+        this.player.template.play.innerHTML = this.player.template.tplButton(name, icon);
+        var button = this.player.template.play.querySelector('button');
+
+        button.addEventListener('click', () => {
             this.player.toggle();
         });
+    }
 
-        if (!isMobile) {
-            this.player.template.videoWrap.addEventListener('click', () => {
-                this.player.toggle();
-            });
-            this.player.template.controllerMask.addEventListener('click', () => {
-                this.player.toggle();
-            });
-        }
-        else {
-            this.player.template.videoWrap.addEventListener('click', () => {
-                this.toggle();
-            });
-            this.player.template.controllerMask.addEventListener('click', () => {
-                this.toggle();
+    initPrevButton (show) {
+        this.player.template.prev.innerHTML = this.player.template.tplButton('Prev', 'prev', !show, (content) => {
+            var image = this.player.lineserver.cameras[this.player.currentChannel-1].image;
+            var name = this.player.lineserver.cameras[this.player.currentChannel-1].name;
+            return content('tplCameraPreview', {'image': image, 'description': name});
+        });
+        if (show) {
+            var prevButton = this.player.template.prev.querySelector('button');
+            prevButton.addEventListener('click', (e) => {
+                this.player.switchVideo(this.player.currentChannel-1, this.player.currentQuality);
             });
         }
     }
 
-    initFullButton () {
-        this.player.template.browserFullButton.addEventListener('click', () => {
-            this.player.fullScreen.toggle('browser');
+    initNextButton (show) {
+        this.player.template.next.innerHTML = this.player.template.tplButton('Next', 'next', !show, (content) => {
+            var image = this.player.lineserver.cameras[this.player.currentChannel+1].image;
+            var name = this.player.lineserver.cameras[this.player.currentChannel+1].name;
+            return content('tplCameraPreview', {'image': image, 'description': name});
         });
+        if (show) {
+            var nextButton = this.player.template.next.querySelector('button');
+            nextButton.addEventListener('click', (e) => {
+                this.player.switchVideo(this.player.currentChannel+1, this.player.currentQuality);
+            });
+        }
     }
 
     initVolumeButton () {
@@ -106,20 +106,27 @@ class Controller {
     }
 
     initQualityButton (list, current) {
-        this.player.template.quality.innerHTML = this.player.template.tplQuality(list, current);
-        var qualityList = this.player.template.quality.querySelector('.lineplayer-quality-list');
-        if (qualityList) {
-            qualityList.addEventListener('click', (e) => {
-                if (e.target.classList.contains('lineplayer-quality-item')) {
-                    this.player.switchVideo(this.player.currentChannel, parseInt(e.target.dataset.index));
-                }
+        this.player.template.quality.innerHTML = '';
+        if (list.length > 1) {
+            this.player.template.quality.innerHTML = this.player.template.tplButton('Quality change', list[current].name, false, (content) => {
+                return content('tplQuality', {'list': list, 'current': current});
             });
+            var qualityList = this.player.template.quality.querySelector('.lineplayer-button-panel');
+            if (qualityList) {
+                qualityList.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('lineplayer-quality-item')) {
+                        this.player.switchVideo(this.player.currentChannel, parseInt(e.target.dataset.index));
+                    }
+                });
+            }
         }
     }
 
     initScreenshotButton () {
         if (this.player.options.screenshot) {
-            this.player.template.camareButton.addEventListener('click', (e) => {
+            this.player.template.screenshot.innerHTML = this.player.template.tplButton('Screenshot', 'camera');
+            var screenshotButton = this.player.template.screenshot.querySelector('button');
+            screenshotButton.addEventListener('click', (e) => {
                 e.preventDefault();
                 const canvas = document.createElement("canvas");
                 canvas.width = this.player.video.videoWidth;
@@ -131,6 +138,14 @@ class Controller {
                 this.player.events.trigger('screenshot', dataURL);
             });
         }
+    }
+
+    initFullButton () {
+        this.player.template.fullScreen.innerHTML = this.player.template.tplButton('Full screen', 'full');
+        var fullScreenButton = this.player.template.fullScreen.querySelector('button');
+        fullScreenButton.addEventListener('click', () => {
+            this.player.fullScreen.toggle();
+        });
     }
 
     setAutoHide () {

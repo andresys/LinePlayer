@@ -23,7 +23,6 @@ module.exports = function (lang) {
 const tranTxt = {
     "ru-ru" : {
         'LinePlayer is loading': 'LinePlayer загружается',
-        'LinePlayer feedback': 'Оставить отзыв',
         'About LinePlayer': 'О LinePlayer',
         'This video fails to load': 'Ошибка загрузки видео',
         'Full screen': 'Во весь экран',
@@ -32,6 +31,8 @@ const tranTxt = {
         'Live': 'В эфире',
         'Play' : 'Возпроизвести',
         'Pause' : 'Пауза',
+        'Prev' : 'Предыдущее',
+        'Next' : 'Следующее',
         'Quality change' : 'Сменить качество видео'
     }
 };

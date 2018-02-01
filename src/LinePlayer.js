@@ -161,7 +161,7 @@ class LinePlayer {
     switchVideo (channel, quality = 0) {
         channel = Math.max(0, Math.min(this.lineserver.cameras.length - 1, channel));
         quality = Math.max(0, Math.min(this.lineserver.cameras[channel].quality.length - 1, quality));
-        if ((channel == this.currentChannel) && (quality == this.qurentQuality)) {
+        if ((channel == this.currentChannel) && (quality == this.currentQuality)) {
             return;
         }
         this.currentChannel = channel;
@@ -174,7 +174,12 @@ class LinePlayer {
             this.video.poster = this.lineserver.cameras[channel].image;
             this.url = this.lineserver.cameras[channel].quality[quality].url;
             this.title(this.lineserver.cameras[channel].name);
+
             this.controller.initQualityButton(this.lineserver.cameras[channel].quality, quality);
+            if (this.lineserver.cameras.length > 1) {
+                this.controller.initPrevButton(channel > 0);
+                this.controller.initNextButton(channel < this.lineserver.cameras.length - 1);
+            }
 
             if (!paused) this.play();
         }
@@ -196,8 +201,7 @@ class LinePlayer {
             this.hls.attachMedia(this.video);
         }
 
-        this.template.playButton.innerHTML = this.icons.get('pause');
-        this.template.playButton.setAttribute('data-balloon', this.tran('Pause'));
+        this.controller.initPlayButton('Pause', 'pause');
 
         this.video.play();
         this.container.classList.add('lineplayer-playing');
@@ -234,8 +238,7 @@ class LinePlayer {
             this.hls.detachMedia();
         }
 
-        this.template.playButton.innerHTML = this.icons.get('play');
-        this.template.playButton.setAttribute('data-balloon', this.tran('Play'));
+        this.controller.initPlayButton('Play', 'play');
 
         this.video.pause();
         this.container.classList.remove('lineplayer-playing');

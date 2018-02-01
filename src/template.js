@@ -18,18 +18,21 @@ class Template {
         this.volumeIcon = this.container.querySelector('.lineplayer-volume-icon .lineplayer-icon-content');
         this.video = this.container.querySelector('.lineplayer-video-current');
         this.bezel = this.container.querySelector('.lineplayer-bezel-icon');
-        this.playButton = this.container.querySelector('.lineplayer-play-icon');
         this.videoWrap = this.container.querySelector('.lineplayer-video-wrap');
         this.controllerMask = this.container.querySelector('.lineplayer-controller-mask');
         this.mask = this.container.querySelector('.lineplayer-mask');
         this.controller = this.container.querySelector('.lineplayer-controller');
-        this.browserFullButton = this.container.querySelector('.lineplayer-full-icon');
         this.menu = this.container.querySelector('.lineplayer-menu');
-        this.camareButton = this.container.querySelector('.lineplayer-camera-icon');
-        this.quality = this.container.querySelector('.lineplayer-quality');
-        this.liveBadge = this.container.querySelector('.lineplayer-live-badge');
         this.notice = this.container.querySelector('.lineplayer-notice');
         this.title = this.container.querySelector('.lineplayer-title');
+
+        this.play = this.container.querySelector('.lineplayer-play');
+        this.prev = this.container.querySelector('.lineplayer-prev');
+        this.next = this.container.querySelector('.lineplayer-next');
+        this.liveBadge = this.container.querySelector('.lineplayer-live-badge');
+        this.quality = this.container.querySelector('.lineplayer-quality');
+        this.screenshot = this.container.querySelector('.lineplayer-screenshot');
+        this.fullScreen = this.container.querySelector('.lineplayer-full');        
     }
 
     tpl (options, index, tran, icons) {
@@ -76,12 +79,13 @@ class Template {
 
         <div class="lineplayer-controller-mask"></div>
         <div class="lineplayer-controller">
-            <div class="lineplayer-icons lineplayer-icons-left">
-                <button class="lineplayer-icon lineplayer-play-icon" data-balloon="${tran('Play')}" data-balloon-pos="up">
-                    <span class="lineplayer-icon-content">${icons.get('play')}</span>
-                </button>
+            <ul class="lineplayer-icons lineplayer-icons-left">
+                <li class="lineplayer-play"></li>
+                <li class="lineplayer-prev"></li>
+                <li class="lineplayer-next"></li>
+
                 ${options.volume ? `
-                <div class="lineplayer-volume">
+                <li class="lineplayer-volume">
                     <button class="lineplayer-icon lineplayer-volume-icon">
                         <span class="lineplayer-icon-content">${icons.get('volume-down')}</span>
                     </button>
@@ -92,55 +96,86 @@ class Template {
                             </div>
                         </div>
                     </div>
-                </div>` : ``}
-                <span class="lineplayer-live-badge"><span class="lineplayer-live-dot" style="background: ${options.theme};"></span>${tran('Live')}</span>
-            </div>
-            <div class="lineplayer-icons lineplayer-icons-right">
-                <div class="lineplayer-quality"></div>
+                </li>` : ``}
 
-                ${options.screenshot ? `
-                <div class="lineplayer-camera">
-                    <button class="lineplayer-icon lineplayer-camera-icon" data-balloon="${tran('Screenshot')}" data-balloon-pos="up">
-                        <span class="lineplayer-icon-content">${icons.get('camera')}</span>
-                    </button>
-                </div>
-                ` : ``}
-
-                <div class="lineplayer-full">
-                    <button class="lineplayer-icon lineplayer-full-icon" data-balloon="${tran('Full screen')}" data-balloon-pos="up">
-                        <span class="lineplayer-icon-content">${icons.get('full')}</span>
-                    </button>
-                </div>
-            </div>
+                <li class="lineplayer-live">
+                    <span class="lineplayer-live-badge"><span class="lineplayer-live-dot" style="background: ${options.theme};"></span>${tran('Live')}</span>
+                </li>
+            </ul>
+            <ul class="lineplayer-icons lineplayer-icons-right">
+                <li class="lineplayer-quality"></li>
+                <li class="lineplayer-screenshot"></li>
+                <li class="lineplayer-full"></li>
+            </ul>
         </div>
 
-        ${this.tplContextmenuList(options.contextmenu, tran)}
+        ${this.tplContextmenuList(options.contextmenu)}
 
         <div class="lineplayer-notice"></div>`;
     }
 
-    tplContextmenuList (contextmenu, tran) {
+    tplContextmenuList (contextmenu) {
         let result = '<div class="lineplayer-menu">';
         for (let i = 0; i < contextmenu.length; i++) {
-            result += `<div class="lineplayer-menu-item"><a target="_blank" href="${contextmenu[i].link}">${tran(contextmenu[i].text)}</a></div>`;
+            result += `<div class="lineplayer-menu-item"><a target="_blank" href="${contextmenu[i].link}">${this.tran(contextmenu[i].text)}</a></div>`;
         }
         result += '</div>';
 
         return result;
     }
 
-    tplQuality (list, current) {
-        var quality_list = '<div class="lineplayer-quality-list">';
+    tplButton (name, icon, disable = false, content = (content) => { return content('tplHint', null)}) {
+        const contentPanel = (show) => {
+            return show ? content((tplFunction, options) => {
+                if (tplFunction && {}.toString.call(this[tplFunction]) === '[object Function]') {
+                    return this[tplFunction](name, icon, options);
+                }
+                return this.tplHint(name, icon);
+            }) : '';
+        }
+        return `
+            <button class="lineplayer-icon${ disable ? ' disable' : '' }">
+                <span class="lineplayer-icon-content">${this.icons.get(icon, disable)}</span>
+            </button>
+            ${contentPanel(!disable)}`;
+    }
+
+    tplCameraPreview (name, icon, options) {
+        var image = options['image'],
+            description = options['description'];
+
+        return `
+            <div class="lineplayer-button-mask">
+                <div class="lineplayer-button-panel lineplayer-button-${icon}-panel">
+                    <span>${this.tran(name)}</span>
+                    ${image ? `<img src="${image}" alt="${this.tran(name)}"/>` : ''}
+                    <span>${description}</span>
+                </div>
+            </div>`;
+    }
+
+    tplQuality (name, icon, options) {
+        var list = options['list'],
+            current = options['current'];
+
+        var quality_list = '<div class="lineplayer-button-panel">';
         for (var i = 0; i < list.length; i++) {
             quality_list += `<div class="lineplayer-quality-item" data-index="${i}">${list[i].name}</div>`;
         }
         quality_list += '</div>';
 
         return `
-        
-            <button class="lineplayer-icon lineplayer-quality-icon">${list[current].name}</button>
-            <div class="lineplayer-quality-mask">
+            <div class="lineplayer-button-mask">
                 ${quality_list}
+            </div>`;
+    }
+
+    tplHint (name, icon) {
+        return `
+            <div class="lineplayer-button-mask">
+                <div class="lineplayer-button-panel lineplayer-button-${icon}-panel">
+                    <span>${this.tran(name)}</span>
+                </div>
             </div>`;
     }
 
