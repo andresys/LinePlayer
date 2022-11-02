@@ -11,11 +11,6 @@ class Template {
     init () {
         this.container.innerHTML = this.tpl(this.options, this.index, this.tran, this.icons);
 
-        this.volumeBar = this.container.querySelector('.lineplayer-volume-bar-inner');
-        this.volumeBarWrap = this.container.querySelector('.lineplayer-volume-bar');
-        this.volumeBarWrapWrap = this.container.querySelector('.lineplayer-volume-bar-wrap');
-        this.volumeButton = this.container.querySelector('.lineplayer-volume');
-        this.volumeIcon = this.container.querySelector('.lineplayer-volume-icon .lineplayer-icon-content');
         this.video = this.container.querySelector('.lineplayer-video-current');
         this.bezel = this.container.querySelector('.lineplayer-bezel-icon');
         this.videoWrap = this.container.querySelector('.lineplayer-video-wrap');
@@ -29,19 +24,20 @@ class Template {
         this.play = this.container.querySelector('.lineplayer-play');
         this.prev = this.container.querySelector('.lineplayer-prev');
         this.next = this.container.querySelector('.lineplayer-next');
+        this.volume = this.container.querySelector('.lineplayer-volume');
         this.liveBadge = this.container.querySelector('.lineplayer-live-badge');
         this.quality = this.container.querySelector('.lineplayer-quality');
         this.screenshot = this.container.querySelector('.lineplayer-screenshot');
         this.fullScreen = this.container.querySelector('.lineplayer-full');        
     }
 
-    tpl (options, index, tran, icons) {
+    tpl (options, index, tran) {
         return `
         <div class="lineplayer-mask"></div>
         <div class="lineplayer-video-wrap">
             ${this.tplVideo(true, undefined, options.screenshot, undefined)}
-            ${options.title ? `<div class="lineplayer-title"></div>` : ``}
-            ${options.logo ? `<div class="lineplayer-logo"><img src="${options.logo}"></div>` : ``}
+            ${options.title ? '<div class="lineplayer-title"></div>' : ''}
+            ${options.logo ? `<div class="lineplayer-logo"><img src="${options.logo}"></div>` : ''}
 
             <div class="lineplayer-bezel">
                 <span class="lineplayer-bezel-icon"></span>
@@ -83,21 +79,7 @@ class Template {
                 <li class="lineplayer-play"></li>
                 <li class="lineplayer-prev"></li>
                 <li class="lineplayer-next"></li>
-
-                ${options.volume ? `
-                <li class="lineplayer-volume">
-                    <button class="lineplayer-icon lineplayer-volume-icon">
-                        <span class="lineplayer-icon-content">${icons.get('volume-down')}</span>
-                    </button>
-                    <div class="lineplayer-volume-bar-wrap" data-balloon-pos="up">
-                        <div class="lineplayer-volume-bar">
-                            <div class="lineplayer-volume-bar-inner" style="background: ${options.theme};">
-                                <span class="lineplayer-thumb" style="background: ${options.theme}"></span>
-                            </div>
-                        </div>
-                    </div>
-                </li>` : ``}
-
+                <li class="lineplayer-volume"></li>
                 <li class="lineplayer-live">
                     <span class="lineplayer-live-badge"><span class="lineplayer-live-dot" style="background: ${options.theme};"></span>${tran('Live')}</span>
                 </li>
@@ -124,7 +106,7 @@ class Template {
         return result;
     }
 
-    tplButton (name, icon, disable = false, content = (content) => { return content('tplHint', null)}) {
+    tplButton (name, icon, disable = false, content = (content) => { return content('tplHint', null);}) {
         const contentPanel = (show) => {
             return show ? content((tplFunction, options) => {
                 if (tplFunction && {}.toString.call(this[tplFunction]) === '[object Function]') {
@@ -132,7 +114,7 @@ class Template {
                 }
                 return this.tplHint(name, icon);
             }) : '';
-        }
+        };
         return `
             <button class="lineplayer-icon${ disable ? ' disable' : '' }">
                 <span class="lineplayer-icon-content">${this.icons.get(icon, disable)}</span>
@@ -154,9 +136,20 @@ class Template {
             </div>`;
     }
 
+    tplVolume () {
+        return `
+            <div class="lineplayer-volume-bar-wrap" data-balloon-pos="up">
+                <div class="lineplayer-volume-bar">
+                    <div class="lineplayer-volume-bar-inner" style="background: ${this.options.theme};">
+                        <span class="lineplayer-thumb" style="background: ${this.options.theme}"></span>
+                    </div>
+                </div>
+            </div>`;
+    }
+
     tplQuality (name, icon, options) {
-        var list = options['list'],
-            current = options['current'];
+        var list = options['list'];
+        // var current = options['current'];
 
         var quality_list = '<div class="lineplayer-button-panel">';
         for (var i = 0; i < list.length; i++) {
@@ -181,7 +174,7 @@ class Template {
 
     tplVideo (current, pic, screenshot, url) {
         return `
-        <video class="lineplayer-video ${current ? `lineplayer-video-current"` : ``}" ${pic ? `poster="${pic}"` : ``} webkit-playsinline playsinline ${screenshot ? `crossorigin="anonymous"` : ``} src="${url}">
+        <video class="lineplayer-video ${current ? 'lineplayer-video-current"' : ''}" ${pic ? `poster="${pic}"` : ''} webkit-playsinline playsinline ${screenshot ? 'crossorigin="anonymous"' : ''} src="${url}">
          </video>`;
     }
 }

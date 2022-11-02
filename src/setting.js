@@ -1,5 +1,3 @@
-import utils from './utils';
-
 class Setting {
     constructor (player) {
         this.player = player;

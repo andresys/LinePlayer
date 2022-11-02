@@ -4,22 +4,20 @@
 
 Based on [DPlayer](https://github.com/MoePlayer/DPlayer) source code
 
-**[Demo](http://lineplayer.js.org/)**
+**[Web site](https://andresys.github.io/LinePlayer/)**
 
 ## Quick Start
 
 ```html
-<link rel="stylesheet" href="LinePlayer.min.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/lineplayer/dist/LinePlayer.min.css">
 <div id="lineplayer"></div>
 <script src="//cdn.jsdelivr.net/npm/hls.js/dist/hls.min.js"></script>
-<script src="LinePlayer.min.js"></script>
+<script src="//cdn.jsdelivr.net/lineplayer/dist/LinePlayer.min.js"></script>
 ```
 
 ```js
 new LinePlayer({
     container: document.getElementById('lineplayer'),
-    volume: false,
-    screenshot: true,
     line: {
         host: 'line.adm.tver.ru',
         user: 'web',

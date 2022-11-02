@@ -1,5 +1,4 @@
 import utils, { isMobile } from './utils';
-import download from './download';
 
 class Controller {
     constructor (player) {
@@ -38,59 +37,74 @@ class Controller {
     }
 
     initPrevButton (show) {
+        let cameras = this.player.servers.map(server => server.cameras).flat();
         this.player.template.prev.innerHTML = this.player.template.tplButton('Prev', 'prev', !show, (content) => {
-            var image = this.player.lineserver.cameras[this.player.currentChannel-1].image;
-            var name = this.player.lineserver.cameras[this.player.currentChannel-1].name;
+            var image = cameras[this.player.currentChannel-1].image;
+            var name = cameras[this.player.currentChannel-1].name;
             return content('tplCameraPreview', {'image': image, 'description': name});
         });
         if (show) {
             var prevButton = this.player.template.prev.querySelector('button');
-            prevButton.addEventListener('click', (e) => {
+            prevButton.addEventListener('click', () => {
                 this.player.switchVideo(this.player.currentChannel-1, this.player.currentQuality);
             });
         }
     }
 
     initNextButton (show) {
+        let cameras = this.player.servers.map(server => server.cameras).flat();
         this.player.template.next.innerHTML = this.player.template.tplButton('Next', 'next', !show, (content) => {
-            var image = this.player.lineserver.cameras[this.player.currentChannel+1].image;
-            var name = this.player.lineserver.cameras[this.player.currentChannel+1].name;
+            var image = cameras[this.player.currentChannel+1].image;
+            var name = cameras[this.player.currentChannel+1].name;
             return content('tplCameraPreview', {'image': image, 'description': name});
         });
         if (show) {
             var nextButton = this.player.template.next.querySelector('button');
-            nextButton.addEventListener('click', (e) => {
+            nextButton.addEventListener('click', () => {
                 this.player.switchVideo(this.player.currentChannel+1, this.player.currentQuality);
             });
         }
     }
 
     initVolumeButton () {
+        this.player.template.volume.innerHTML = '';
         if (this.player.options.volume) {
+            this.player.template.volume.innerHTML = this.player.template.tplButton('Volume', 'volume-down', false, (content) => {
+                return content('tplVolume');
+            });
+
             const vWidth = 35;
+            const volumeBar = this.player.template.volume.querySelector('.lineplayer-volume-bar-inner');
+            const volumeBarWrap = this.player.template.volume.querySelector('.lineplayer-volume-bar');
+            const volumeBarWrapWrap = this.player.template.volume.querySelector('.lineplayer-volume-bar-wrap');
+            const volumeIcon = this.player.template.volume.querySelector('.lineplayer-icon-content');
+
+            this.player.bar.add('volume', volumeBar);
 
             const volumeMove = (event) => {
                 const e = event || window.event;
-                const percentage = (e.clientX - utils.getElementViewLeft(this.player.template.volumeBarWrap) - 5.5) / vWidth;
+                const percentage = (e.clientX - utils.getElementViewLeft(volumeBarWrap) - 5.5) / vWidth;
                 this.player.volume(percentage, false, true);
             };
             const volumeUp = () => {
                 document.removeEventListener('mouseup', volumeUp);
                 document.removeEventListener('mousemove', volumeMove);
-                this.player.template.volumeButton.classList.remove('lineplayer-volume-active');
+                this.player.template.volume.classList.remove('lineplayer-volume-active');
             };
 
-            this.player.template.volumeBarWrapWrap.addEventListener('click', (event) => {
+            volumeBarWrapWrap.addEventListener('click', (event) => {
                 const e = event || window.event;
-                const percentage = (e.clientX - utils.getElementViewLeft(this.player.template.volumeBarWrap) - 5.5) / vWidth;
+                const percentage = (e.clientX - utils.getElementViewLeft(volumeBarWrap) - 5.5) / vWidth;
                 this.player.volume(percentage, false, true);
             });
-            this.player.template.volumeBarWrapWrap.addEventListener('mousedown', () => {
+            volumeBarWrapWrap.addEventListener('mousedown', () => {
                 document.addEventListener('mousemove', volumeMove);
                 document.addEventListener('mouseup', volumeUp);
-                this.player.template.volumeButton.classList.add('lineplayer-volume-active');
+                this.player.template.volume.classList.add('lineplayer-volume-active');
             });
-            this.player.template.volumeIcon.addEventListener('click', () => {
+
+            var volumeButton = this.player.template.volume.querySelector('button');
+            volumeButton.addEventListener('click', () => {
                 if (this.player.video.muted) {
                     this.player.video.muted = false;
                     this.player.switchVolumeIcon();
@@ -98,7 +112,7 @@ class Controller {
                 }
                 else {
                     this.player.video.muted = true;
-                    this.player.template.volumeIcon.innerHTML = this.player.icons.get('volume-off');
+                    volumeIcon.innerHTML = this.player.icons.get('volume-off');
                     this.player.bar.set('volume', 0, 'width');
                 }
             });
@@ -128,13 +142,13 @@ class Controller {
             var screenshotButton = this.player.template.screenshot.querySelector('button');
             screenshotButton.addEventListener('click', (e) => {
                 e.preventDefault();
-                const canvas = document.createElement("canvas");
+                const canvas = document.createElement('canvas');
                 canvas.width = this.player.video.videoWidth;
                 canvas.height = this.player.video.videoHeight;
                 canvas.getContext('2d').drawImage(this.player.video, 0, 0, canvas.width, canvas.height);
                 const dataURL = canvas.toDataURL('image/png');
                 const fileName = `${this.player.template.title && this.player.template.title.innerHTML || 'LinePlayer'} - ${utils.currentDateTime()}.png`;
-                download(dataURL, fileName, 'image/png');
+                require('downloadjs')(dataURL, fileName, 'image/png');
                 this.player.events.trigger('screenshot', dataURL);
             });
         }

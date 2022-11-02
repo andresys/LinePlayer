@@ -1,8 +1,6 @@
-import utils from './utils';
-
 const apiBackend = require('./api.js');
 
-class LineServer {
+class DominationServer {
     constructor (options) {
         this.options = options;
         this.cameras = [];
@@ -29,17 +27,16 @@ class LineServer {
             }
             else {
                 const channels = [this.options.server.channels || []].reduce((flat, current) => flat.concat(current), []);
-                this.cameras = [].concat.apply([], data).map((val) => {
-                    if (channels.length == 0 || channels.indexOf(parseInt(/cameras\/(\d+)/i.exec(val.uri)[1])) >= 0) {
+                this.cameras = [].concat.apply([], data).map((val, index) => {
+                    if (channels.length == 0 || channels.indexOf(index) >= 0) {
                         return {
                             name: val.name,
-                            image: this.makeurl(val['image-uri']),
                             quality: [{
                                 name: 'HD',
-                                url: this.makeurl(`${val['streaming-uri']}/main.m3u8`)
+                                url: this.makeurl('/api/hls/playlist', {src: val['marker'], stream: 0, onlyKeyFrames: false})
                             }, {
                                 name: 'SD',
-                                url: this.makeurl(`${val['streaming-uri']}/sub.m3u8`)
+                                url: this.makeurl('/api/hls/playlist', {src: val['marker'], stream: 1, onlyKeyFrames: false})
                             }]
                         };
                     }
@@ -52,25 +49,22 @@ class LineServer {
         });
     }
 
-    makeurl (path = '/cameras', additional_params = {}) {
-        var address = `${this.options.server.proto || '//'}${this.options.server.host}${this.options.server.port ? ':' + this.options.server.port : ''}`;
-        var params = utils.extendArray({authorization: `Basic ${btoa(`${this.options.server.user}:${this.options.server.password}`)}`}, additional_params);
-
-        var url_params = [];
-        for (var key in params) {
-            if (params.hasOwnProperty(key)) {
-                url_params.push(`${key}=${encodeURIComponent(params[key])}`);
+    makeurl(path = '/api/channels', additional_params = {}) {
+        let url_params = [];
+        for (let key in additional_params) {
+            if (additional_params.hasOwnProperty(key)) {
+                url_params.push(`${key}=${encodeURIComponent(additional_params[key])}`);
             }
         }
 
-        return `${address}${path}?${url_params.join('&')}`;
+        return `${this.options.server.proto || '//'}${this.options.server.host}${this.options.server.port ? ':' + this.options.server.port : ''}${path}?${url_params.join('&')}`;
     }
 
     makeheaders() {
-        let headers = {};
-        
-        return headers;
+        return {
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoid2ViIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsIm5iZiI6MTY1NDY3MTk3NywiZXhwIjoxNjU1Mjc2Nzc3LCJpYXQiOjE2NTQ2NzE5NzcsImlzcyI6IkRvbWluYXRpb24iLCJhdWQiOiJEb21pbmF0aW9uIFdlYiBDbGllbnQifQ.PAvUG9SH38tYB3XJFUdm4NlvKvJsZKtUhjQGrXSdDjw'
+        };
     }
 }
 
-module.exports = LineServer;
+module.exports = DominationServer;

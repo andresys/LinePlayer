@@ -1,4 +1,4 @@
-module.exports = (options) => {
+module.exports = () => {
     return {
         play: [
             '0 0 16 32',

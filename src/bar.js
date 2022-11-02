@@ -3,8 +3,10 @@ class Bar {
         this.player = player;
 
         this.elements = {};
+    }
 
-        if (this.player.options.volume) this.elements.volume = this.player.template.volumeBar;
+    add (type, bar) {
+        this.elements[type] = bar;   
     }
 
     /**

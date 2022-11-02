@@ -1,6 +1,11 @@
 module.exports = {
+    "parser": "babel-eslint",
     "env": {
+        "browser": true,
         "node": true
+    },
+    "globals": {
+        "Hls": "readonly"
     },
     "extends": "eslint:recommended",
     "rules": {
@@ -19,6 +24,8 @@ module.exports = {
         "semi": [
             "error",
             "always"
-        ]
+        ],
+        "no-console": "off",
+        "no-unused-vars": "warn",
     }
 };

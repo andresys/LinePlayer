@@ -1,6 +1,6 @@
 import './LinePlayer.scss';
 
-import utils, { isMobile } from './utils';
+import { isMobile } from './utils';
 import handleOption from './options';
 import i18n from './i18n';
 import Template from './template';
@@ -14,7 +14,8 @@ import Controller from './controller';
 import Setting from './setting';
 import HotKey from './hotkey';
 import ContextMenu from './contextmenu';
-import LineServer from './lineserver';
+import Server from './server';
+// import { log } from 'console';
 
 let index = 0;
 const instances = [];
@@ -35,6 +36,7 @@ class LinePlayer {
         this.events = new Events();
         this.user = new User(this);
         this.container = this.options.container;
+        this.servers = [];
 
         this.container.classList.add('lineplayer');
         if (this.options.live) {
@@ -83,28 +85,33 @@ class LinePlayer {
 
         this.initVideoEvents(this.video);
 
-        if (this.options.line) {
-            this.lineserver = new LineServer({
-                callback: () => {
-                    setTimeout(() => {
-                        this.switchVideo(0);
-
-                        // autoplay
-                        if (this.options.autoplay && !isMobile) {
-                            this.play();
-                        }
-                        else if (isMobile) {
-                            this.pause();
-                        }
-                    }, 0);
-                },
-                error: (msg) => {
-                    this.notice(msg);
-                },
-                line: this.options.line,
-                events: this.events
-            });
-        }
+        ['line', 'domination'].forEach(type => {
+            if(this.options[type]) {
+                this.options[type] = [this.options[type] || []].reduce((flat, current) => flat.concat(current), []);
+                this.options[type].forEach(server => {
+                    this.servers.push(new Server(type, {
+                        callback: () => {
+                            setTimeout(() => {
+                                this.switchVideo(0);
+        
+                                // autoplay
+                                if (this.options.autoplay && !isMobile) {
+                                    this.play();
+                                }
+                                else if (isMobile) {
+                                    this.pause();
+                                }
+                            }, 0);
+                        },
+                        error: (msg) => {
+                            this.notice(msg);
+                        },
+                        server: server,
+                        events: this.events,
+                    }));
+                });
+            }
+        });
 
         index++;
         instances.push(this);
@@ -159,8 +166,9 @@ class LinePlayer {
      * @param {int} quality - new video quality
      */
     switchVideo (channel, quality = 0) {
-        channel = Math.max(0, Math.min(this.lineserver.cameras.length - 1, channel));
-        quality = Math.max(0, Math.min(this.lineserver.cameras[channel].quality.length - 1, quality));
+        let cameras = this.servers.map(server => server.cameras).flat();
+        channel = Math.max(0, Math.min(cameras.length - 1, channel));
+        quality = Math.max(0, Math.min(cameras[channel].quality.length - 1, quality));
         if ((channel == this.currentChannel) && (quality == this.currentQuality)) {
             return;
         }
@@ -171,14 +179,14 @@ class LinePlayer {
             var paused = this.video.paused;
             if (!paused) this.pause();
 
-            this.video.poster = this.lineserver.cameras[channel].image;
-            this.url = this.lineserver.cameras[channel].quality[quality].url;
-            this.title(this.lineserver.cameras[channel].name);
+            this.video.poster = cameras[channel].image;
+            this.url = cameras[channel].quality[quality].url;
+            this.title(cameras[channel].name);
 
-            this.controller.initQualityButton(this.lineserver.cameras[channel].quality, quality);
-            if (this.lineserver.cameras.length > 1) {
+            this.controller.initQualityButton(cameras[channel].quality, quality);
+            if (cameras.length > 1) {
                 this.controller.initPrevButton(channel > 0);
-                this.controller.initNextButton(channel < this.lineserver.cameras.length - 1);
+                this.controller.initNextButton(channel < cameras.length - 1);
             }
 
             if (!paused) this.play();
@@ -227,7 +235,7 @@ class LinePlayer {
         }
 
         if(Hls && Hls.isSupported()) {
-            const canvas = document.createElement("canvas");
+            const canvas = document.createElement('canvas');
             canvas.width = this.video.clientWidth;
             canvas.height = this.video.clientHeight;
             canvas.getContext('2d').drawImage(this.video, 0, 0, canvas.width, canvas.height);
@@ -247,14 +255,15 @@ class LinePlayer {
     }
 
     switchVolumeIcon () {
+        const volumeIcon = this.template.volume.querySelector('.lineplayer-icon-content');
         if (this.volume() >= 0.95) {
-            this.template.volumeIcon.innerHTML = this.icons.get('volume-up');
+            volumeIcon.innerHTML = this.icons.get('volume-up');
         }
         else if (this.volume() > 0) {
-            this.template.volumeIcon.innerHTML = this.icons.get('volume-down');
+            volumeIcon.innerHTML = this.icons.get('volume-down');
         }
         else {
-            this.template.volumeIcon.innerHTML = this.icons.get('volume-off');
+            volumeIcon.innerHTML = this.icons.get('volume-off');
         }
     }
 
@@ -267,15 +276,15 @@ class LinePlayer {
             percentage = Math.max(percentage, 0);
             percentage = Math.min(percentage, 1);
             this.bar.set('volume', percentage, 'width');
-            const formatPercentage = `${this.tran('Volume')} ${(percentage * 100).toFixed(0)}%`;
-            this.template.volumeBarWrapWrap.dataset.balloon = formatPercentage;
+            // const formatPercentage = `${this.tran('Volume')} ${(percentage * 100).toFixed(0)}%`;
+            //this.template.volumeBarWrapWrap.dataset.balloon = formatPercentage;
             if (!nostorage) {
                 this.user.set('volume', percentage);
             }
 
-             if (!nonotice) {
-                 this.notice(`${this.tran('Volume')} ${(percentage * 100).toFixed(0)}%`);
-             }
+            if (!nonotice) {
+                this.notice(`${this.tran('Volume')} ${(percentage * 100).toFixed(0)}%`);
+            }
 
             this.video.volume = percentage;
             if (this.video.muted) {

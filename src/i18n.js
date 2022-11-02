@@ -21,7 +21,7 @@ module.exports = function (lang) {
 
 // add translation text here
 const tranTxt = {
-    "ru-ru" : {
+    'ru' : {
         'LinePlayer is loading': 'LinePlayer загружается',
         'About LinePlayer': 'О LinePlayer',
         'This video fails to load': 'Ошибка загрузки видео',

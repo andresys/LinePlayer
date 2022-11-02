@@ -7,19 +7,14 @@ module.exports = (options) => {
 
     // default options
     const defaultOption = {
-        container: options.element || document.getElementsByClassName('dplayer')[0],
+        container: options.element || document.getElementsByClassName('lineplayer')[0],
         autoplay: false,
         title: true,
         theme: '#b7daff',
         lang: (navigator.language || navigator.browserLanguage).toLowerCase(),
-        screenshot: false,
-        volume: true,
+        screenshot: true,
+        volume: false,
         hotkey: true,
-        volume: 0.7,
-        line: {
-            proto: '//',
-            user: 'web'
-        },
         icons: icons(),
         iconsColor: '#ffffff',
         iconDisableColor: '#a0a0a0',
@@ -33,23 +28,24 @@ module.exports = (options) => {
     }
 
     if (options.logo) {
-        var logo = new Image();
-        logo.onload = () => {
-            var w = logo.naturalWidth;
-            var h = logo.naturalHeight;
-            var title = options.container.querySelector('.lineplayer-title');
-            if (title) {
-                title.style.paddingLeft = `${40 + w}px`;
-                title.style.top = `${20 + Math.round(h - utils.fullHeight(title)) / 2}px`;
-            }
-        };
-        logo.src = options.logo;
+        document.addEventListener('DOMContentLoaded', () => {
+            const logo = options.container.querySelector('.lineplayer-logo').querySelector('img');
+            logo.onload = () => {
+                var w = logo.width;
+                var h = logo.height;
+                var title = options.container.querySelector('.lineplayer-title');
+                if (title) {
+                    title.style.paddingLeft = `${40 + w}px`;
+                    title.style.top = `${20 + Math.round(h - utils.fullHeight(title)) / 2}px`;
+                }
+            };
+        });
     }
 
     options.contextmenu = options.contextmenu.concat([
         {
             text: 'About LinePlayer',
-            link: 'https://andresys.github.io/LinePlayer/'
+            link: 'https://github.com/andresys/LinePlayer'
         }
     ]);
 

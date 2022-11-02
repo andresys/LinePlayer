@@ -7,10 +7,11 @@ function initPlayers () {
         container: document.getElementById('lineplayer'),
         volume: false,
         screenshot: true,
+        autoplay: true,
         line: {
             host: 'line.adm.tver.ru',
             user: 'web',
             password: 'web'
-        }
+        },
     });
 }
