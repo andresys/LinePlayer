@@ -14,7 +14,7 @@ class LineServer {
 
     load () {
         let cameras_url = this.makeurl();
-        let headers = this.makeheaders();
+        let headers = {};
         
         this.events && this.events.trigger('lineserver_load_start');
 
@@ -28,7 +28,7 @@ class LineServer {
                 }
             }
             else {
-                const channels = [this.options.server.channels || []].reduce((flat, current) => flat.concat(current), []);
+                const channels = [this.options.server.channels === 0 && [0] || []].reduce((flat, current) => flat.concat(current), []);
                 this.cameras = [].concat.apply([], data).map((val) => {
                     if (channels.length == 0 || channels.indexOf(parseInt(/cameras\/(\d+)/i.exec(val.uri)[1])) >= 0) {
                         return {
@@ -64,12 +64,6 @@ class LineServer {
         }
 
         return `${address}${path}?${url_params.join('&')}`;
-    }
-
-    makeheaders() {
-        let headers = {};
-        
-        return headers;
     }
 }
 

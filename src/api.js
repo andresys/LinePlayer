@@ -8,7 +8,6 @@ const SendXMLHttpRequest = (url, headers, data, success, fail) => {
     const xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange = () => {
-        // console.log(xhr)
         if (xhr.readyState === 4) {
             if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 304) {
                 const response = JSON.parse(xhr.responseText);
@@ -21,9 +20,7 @@ const SendXMLHttpRequest = (url, headers, data, success, fail) => {
     };
 
     xhr.open(data !== null ? 'POST' : 'GET', url, true);
-    // xhr.setRequestHeader("Accept", "application/json");
-    // xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-    // xhr.withCredentials = true;
+    xhr.setRequestHeader('Content-Type', 'application/json');
     Object.entries(headers).forEach(entry  => {
         const [key, value] = entry;
         xhr.setRequestHeader(key, value);
@@ -34,12 +31,9 @@ const SendXMLHttpRequest = (url, headers, data, success, fail) => {
 module.exports = {
     send: (endpoint, headers, linesrverData, callback) => {
         SendXMLHttpRequest(endpoint, headers, linesrverData, (xhr, response) => {
-            console.log('Post lineserver: ', response);
-            if (callback) {
-                callback();
-            }
+            callback(null, response);
         }, (xhr) => {
-            console.log('Request was unsuccessful: ' + xhr.status);
+            callback({ status: xhr.status, response: null });
         });
     },
 

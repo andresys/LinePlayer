@@ -8,10 +8,12 @@ function initPlayers () {
         volume: false,
         screenshot: true,
         autoplay: true,
-        line: {
+        domination: {
             host: 'line.adm.tver.ru',
+            proto: 'https://',
             user: 'web',
-            password: 'web'
+            password: 'web',
+            channels: 0
         },
     });
 }
