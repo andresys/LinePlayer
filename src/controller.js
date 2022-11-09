@@ -37,10 +37,9 @@ class Controller {
     }
 
     initPrevButton (show) {
-        let cameras = this.player.servers.map(server => server.cameras).flat();
         this.player.template.prev.innerHTML = this.player.template.tplButton('Prev', 'prev', !show, (content) => {
-            var image = cameras[this.player.currentChannel-1].image;
-            var name = cameras[this.player.currentChannel-1].name;
+            var image = this.player.cameras[this.player.currentChannel-1].image;
+            var name = this.player.cameras[this.player.currentChannel-1].name;
             return content('tplCameraPreview', {'image': image, 'description': name});
         });
         if (show) {
@@ -52,10 +51,9 @@ class Controller {
     }
 
     initNextButton (show) {
-        let cameras = this.player.servers.map(server => server.cameras).flat();
         this.player.template.next.innerHTML = this.player.template.tplButton('Next', 'next', !show, (content) => {
-            var image = cameras[this.player.currentChannel+1].image;
-            var name = cameras[this.player.currentChannel+1].name;
+            var image = this.player.cameras[this.player.currentChannel+1].image;
+            var name = this.player.cameras[this.player.currentChannel+1].name;
             return content('tplCameraPreview', {'image': image, 'description': name});
         });
         if (show) {
@@ -198,4 +196,4 @@ class Controller {
     }
 }
 
-module.exports = Controller;
+export default Controller;

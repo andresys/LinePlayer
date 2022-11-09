@@ -56,7 +56,7 @@ module.exports = {
 
     extendArray (array, extend) {
         for (var key in extend) {
-            if (extend.hasOwnProperty(key)) {
+            if (Object.prototype.hasOwnProperty.call(extend, key)) {
                 if (typeof array[key] === 'object') {
                     array[key] = this.extendArray(array[key], extend[key]);
                 }

@@ -2,7 +2,8 @@ module.exports = {
     "parser": "babel-eslint",
     "env": {
         "browser": true,
-        "node": true
+        "node": true,
+        "es6": true
     },
     "globals": {
         "Hls": "readonly"
@@ -27,5 +28,6 @@ module.exports = {
         ],
         "no-console": "off",
         "no-unused-vars": "warn",
-    }
+    },
+    "plugins": ["promise"]
 };

@@ -1,4 +1,4 @@
-import './LinePlayer.scss';
+import './lineplayer.scss';
 
 import { isMobile } from './utils';
 import handleOption from './options';
@@ -14,8 +14,7 @@ import Controller from './controller';
 import Setting from './setting';
 import HotKey from './hotkey';
 import ContextMenu from './contextmenu';
-import Server from './server';
-// import { log } from 'console';
+import servers from './servers/index';
 
 let index = 0;
 const instances = [];
@@ -36,7 +35,7 @@ class LinePlayer {
         this.events = new Events();
         this.user = new User(this);
         this.container = this.options.container;
-        this.servers = [];
+        this.cameras = this.options.cameras;
 
         this.container.classList.add('lineplayer');
         if (this.options.live) {
@@ -85,12 +84,30 @@ class LinePlayer {
 
         this.initVideoEvents(this.video);
 
-        ['line', 'domination'].forEach(type => {
+        // this.events && this.events.trigger('lineserver_load_start');
+        let played = false;
+        if((this.cameras.length > 0) && !played) {
+            played = true;
+            setTimeout(() => {
+                this.switchVideo(0);
+
+                // autoplay
+                if (this.options.autoplay && !isMobile) {
+                    this.play();
+                }
+                else if (isMobile) {
+                    this.pause();
+                }
+            }, 0);
+        }
+        servers.types.forEach(type => {
             if(this.options[type]) {
                 this.options[type] = [this.options[type] || []].reduce((flat, current) => flat.concat(current), []);
                 this.options[type].forEach(server => {
-                    this.servers.push(new Server(type, {
-                        callback: () => {
+                    servers.load(type, server).then((cameras) => {
+                        this.cameras = this.cameras.concat(cameras);
+                        if(this.cameras && !played) {
+                            played = true;
                             setTimeout(() => {
                                 this.switchVideo(0);
         
@@ -102,16 +119,12 @@ class LinePlayer {
                                     this.pause();
                                 }
                             }, 0);
-                        },
-                        error: (msg) => {
-                            this.notice(msg);
-                        },
-                        server: server,
-                        events: this.events,
-                    }));
+                        }
+                    });
                 });
             }
         });
+        this.events && this.events.trigger('lineserver_load_end');
 
         index++;
         instances.push(this);
@@ -166,9 +179,8 @@ class LinePlayer {
      * @param {int} quality - new video quality
      */
     switchVideo (channel, quality = 0) {
-        let cameras = this.servers.map(server => server.cameras).flat();
-        channel = Math.max(0, Math.min(cameras.length - 1, channel));
-        quality = Math.max(0, Math.min(cameras[channel].quality.length - 1, quality));
+        channel = Math.max(0, Math.min(this.cameras.length - 1, channel));
+        quality = Math.max(0, Math.min(this.cameras[channel].quality.length - 1, quality));
         if ((channel == this.currentChannel) && (quality == this.currentQuality)) {
             return;
         }
@@ -179,14 +191,14 @@ class LinePlayer {
             var paused = this.video.paused;
             if (!paused) this.pause();
 
-            this.video.poster = cameras[channel].image;
-            this.url = cameras[channel].quality[quality].url;
-            this.title(cameras[channel].name);
+            this.video.poster = this.cameras[channel].image;
+            this.url = this.cameras[channel].quality[quality].url;
+            this.title(this.cameras[channel].name);
 
-            this.controller.initQualityButton(cameras[channel].quality, quality);
-            if (cameras.length > 1) {
+            this.controller.initQualityButton(this.cameras[channel].quality, quality);
+            if (this.cameras.length > 1) {
                 this.controller.initPrevButton(channel > 0);
-                this.controller.initNextButton(channel < cameras.length - 1);
+                this.controller.initNextButton(channel < this.cameras.length - 1);
             }
 
             if (!paused) this.play();
@@ -345,7 +357,7 @@ class LinePlayer {
         this.events.trigger('destroy');
 
         for (const key in this) {
-            if (this.hasOwnProperty(key) && key !== 'paused') {
+            if (Object.prototype.hasOwnProperty.call(this, key) && key !== 'paused') {
                 delete this[key];
             }
         }

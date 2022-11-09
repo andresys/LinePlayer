@@ -66,4 +66,4 @@ class FullScreen {
     }
 }
 
-module.exports = FullScreen;
+export default FullScreen;

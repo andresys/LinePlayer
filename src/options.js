@@ -1,7 +1,7 @@
 import utils, { isMobile } from './utils';
 import icons from './icons';
 
-module.exports = (options) => {
+export default (options) => {
     // compatibility: some mobile browsers don't suppose autoplay
     if (isMobile) options.autoplay = false;
 
@@ -19,9 +19,11 @@ module.exports = (options) => {
         iconsColor: '#ffffff',
         iconDisableColor: '#a0a0a0',
         contextmenu: [],
-        mutex: true
+        mutex: true,
     };
     options = utils.extendArray(defaultOption, options);
+
+    options.cameras = [options.cameras || []].reduce((flat, current) => flat.concat(current), []);
 
     if (options.lang) {
         options.lang = options.lang.toLowerCase();
