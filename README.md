@@ -1,6 +1,9 @@
-<h1 align="center">LinePlayer</h1>
+<h1>LinePlayer</h1>
 
-> HTML5 video player for devline server
+> HTML5 player for video servers
+> Supported servers:
+> * Line (https://devline.ru/)
+> * Domination (https://domination.one/)
 
 Based on [DPlayer](https://github.com/MoePlayer/DPlayer) source code
 
@@ -21,10 +24,25 @@ new LinePlayer({
     line: {
         host: 'line.adm.tver.ru',
         user: 'web',
+        password: 'web',
+        channels: [1,2,3]
+    }
+});
+```
+
+or
+
+```js
+new LinePlayer({
+    container: document.getElementById('lineplayer'),
+    domination: {
+        host: 'line.adm.tver.ru',
+        user: 'web',
         password: 'web'
     }
 });
 ```
+
 
 ## Author
 
