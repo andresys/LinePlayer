@@ -11,7 +11,7 @@ export default (options) => {
         autoplay: false,
         title: true,
         theme: '#b7daff',
-        lang: (navigator.language || navigator.browserLanguage).toLowerCase(),
+        lang: (navigator.language || navigator.browserLanguage).toLowerCase().split('-')[0],
         screenshot: true,
         volume: false,
         hotkey: true,
@@ -23,7 +23,13 @@ export default (options) => {
     };
     options = utils.extendArray(defaultOption, options);
 
-    options.cameras = [options.cameras || []].reduce((flat, current) => flat.concat(current), []);
+    options.cameras = [options.cameras || []].reduce((flat, current) => {
+        let quality = { name: 'Unknown', url: current.url };
+        if(delete current.url) {
+            current['quality'] = (current['quality'] || []).concat(quality);
+        }
+        return flat.concat(current);
+    }, []);
 
     if (options.lang) {
         options.lang = options.lang.toLowerCase();

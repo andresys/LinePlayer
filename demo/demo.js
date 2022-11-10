@@ -13,7 +13,7 @@ function initPlayers () {
             proto: 'https://',
             user: 'web',
             password: 'web',
-            channels: 1
+            channels: '0'
         },
     });
 }

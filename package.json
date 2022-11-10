@@ -1,6 +1,6 @@
 {
   "name": "lineplayer",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "HTML5 video player",
   "main": "dist/lineplayer.min.js",
   "style": "dist/lineplayer.min.css",

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import utils from '../utils';
 
 export default {
     load: (options) => new Promise((resolve) => {
@@ -36,30 +37,52 @@ export default {
             }
         };
 
-        read_or_create_jwt((token) => {
-            const headers = {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            };
-            axios.get(makeurl(), { headers }).then(res => {
-                const channels = [options.channels === 0 && [0] || options.channels || []].reduce((flat, current) => flat.concat(current), []);
-                cameras = [].concat.apply([], res.data).map((val, index) => {
-                    if (channels.length == 0 || channels.indexOf(index) >= 0) {
-                        return {
-                            name: val.name,
-                            quality: [{
-                                name: 'HD',
-                                url: makeurl('/api/hls/playlist', {src: val['marker'], stream: 0, onlyKeyFrames: false})
-                            }, {
-                                name: 'SD',
-                                url: makeurl('/api/hls/playlist', {src: val['marker'], stream: 1, onlyKeyFrames: false})
-                            }]
-                        };
-                    }
-                }).filter(x => x);
-    
-                resolve(cameras);
+        if(options.user && options.password) {
+            read_or_create_jwt((token) => {
+                const headers = {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
+                axios.get(makeurl(), { headers }).then(res => {
+                    const channels = [options.channels === 0 && [0] || options.channels || []].reduce((flat, current) => flat.concat(current), []);
+                    cameras = [].concat.apply([], res.data).map((val, index) => {
+                        if (channels.length == 0 || channels.indexOf(index) >= 0 || channels.indexOf(val.name) >= 0) {
+                            return {
+                                name: utils.makevalue(options.name, index, val.name),
+                                image: utils.makevalue(options.image, index),
+                                quality: [{
+                                    name: 'HD',
+                                    url: makeurl('/api/hls/playlist', {src: val['marker'], stream: 0, onlyKeyFrames: false})
+                                }, {
+                                    name: 'SD',
+                                    url: makeurl('/api/hls/playlist', {src: val['marker'], stream: 1, onlyKeyFrames: false})
+                                }]
+                            };
+                        }
+                    }).filter(x => x);
+        
+                    resolve(cameras);
+                });
             });
-        });
+        }
+
+        if(options.marker) {
+            const channels = [options.marker || []].reduce((flat, current) => flat.concat(current), []);
+            cameras = [].concat.apply([], channels).map((val, index) => {
+                return {
+                    name: utils.makevalue(options.name, index),
+                    image: utils.makevalue(options.image, index),
+                    quality: [{
+                        name: 'HD',
+                        url: makeurl('/api/hls/playlist', {src: val, stream: 0, onlyKeyFrames: false})
+                    }, {
+                        name: 'SD',
+                        url: makeurl('/api/hls/playlist', {src: val, stream: 1, onlyKeyFrames: false})
+                    }]
+                };
+            }).filter(x => x);
+        
+            resolve(cameras);
+        }
     })
 };

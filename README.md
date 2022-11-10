@@ -15,7 +15,7 @@ Based on [DPlayer](https://github.com/MoePlayer/DPlayer) source code
 <link rel="stylesheet" href="//cdn.jsdelivr.net/lineplayer/dist/LinePlayer.min.css">
 <div id="lineplayer"></div>
 <script src="//cdn.jsdelivr.net/npm/hls.js/dist/hls.min.js"></script>
-<script src="//cdn.jsdelivr.net/lineplayer/dist/LinePlayer.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/lineplayer/dist/LinePlayer.min.js"></script>
 ```
 
 ```js
@@ -25,7 +25,7 @@ new LinePlayer({
         host: 'line.adm.tver.ru',
         user: 'web',
         password: 'web',
-        channels: [1,2,3]
+        channels: ['0', 'Площадь Ленина']
     }
 });
 ```
@@ -38,7 +38,8 @@ new LinePlayer({
     domination: {
         host: 'line.adm.tver.ru',
         user: 'web',
-        password: 'web'
+        password: 'web',
+        channels: 'Площадь Ленина'
     }
 });
 ```

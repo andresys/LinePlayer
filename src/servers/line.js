@@ -24,11 +24,11 @@ export default {
         };
         axios.get(makeurl(), { headers }).then(res => {
             const channels = [options.channels === 0 && [0] || options.channels || []].reduce((flat, current) => flat.concat(current), []);
-            cameras = [].concat.apply([], res.data).map((val) => {
-                if (channels.length == 0 || channels.indexOf(parseInt(/cameras\/(\d+)/i.exec(val.uri)[1])) >= 0) {
+            cameras = [].concat.apply([], res.data).map((val, index) => {
+                if (channels.length == 0 || channels.indexOf(index) >= 0 || channels.indexOf(/cameras\/(\d+)/i.exec(val.uri)[1]) >= 0 || channels.indexOf(val.name) >= 0) {
                     return {
-                        name: val.name,
-                        image: makeurl(val['image-uri']),
+                        name: utils.makevalue(options.name, index, val.name),
+                        image: utils.makevalue(options.image, index, makeurl(val['image-uri'])),
                         quality: [{
                             name: 'HD',
                             url: makeurl(`${val['streaming-uri']}/main.m3u8`)

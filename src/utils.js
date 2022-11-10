@@ -87,6 +87,26 @@ module.exports = {
         }
     },
 
+    makevalue (value, index, name = null) {
+        if(!value) {
+            return name || '';
+        }
+
+        if(typeof value === 'string') {
+            return value;
+        }
+
+        if(typeof value === 'function') {
+            return value(name, index);
+        }
+
+        if(Array.isArray(value)) {
+            return value[index] || name;
+        }
+
+        return Object.prototype.hasOwnProperty.call(value, index) ? value[index] : name || '';
+    },
+
     /**
      * check if user is using mobile or not
      */

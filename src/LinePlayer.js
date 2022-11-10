@@ -86,20 +86,20 @@ class LinePlayer {
 
         // this.events && this.events.trigger('lineserver_load_start');
         let played = false;
-        if((this.cameras.length > 0) && !played) {
-            played = true;
-            setTimeout(() => {
-                this.switchVideo(0);
+        // if((this.cameras.length > 0) && !played) {
+        //     played = true;
+        //     setTimeout(() => {
+        //         this.switchVideo(0);
 
-                // autoplay
-                if (this.options.autoplay && !isMobile) {
-                    this.play();
-                }
-                else if (isMobile) {
-                    this.pause();
-                }
-            }, 0);
-        }
+        //         // autoplay
+        //         if (this.options.autoplay && !isMobile) {
+        //             this.play();
+        //         }
+        //         else if (isMobile) {
+        //             this.pause();
+        //         }
+        //     }, 0);
+        // }
         servers.types.forEach(type => {
             if(this.options[type]) {
                 this.options[type] = [this.options[type] || []].reduce((flat, current) => flat.concat(current), []);
@@ -181,9 +181,11 @@ class LinePlayer {
     switchVideo (channel, quality = 0) {
         channel = Math.max(0, Math.min(this.cameras.length - 1, channel));
         quality = Math.max(0, Math.min(this.cameras[channel].quality.length - 1, quality));
+        
         if ((channel == this.currentChannel) && (quality == this.currentQuality)) {
             return;
         }
+        
         this.currentChannel = channel;
         this.currentQuality = quality;
 
