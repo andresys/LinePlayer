@@ -7,12 +7,7 @@ function initPlayers () {
         container: document.getElementById('lineplayer'),
         volume: false,
         screenshot: true,
-        line: {
-            host: 'line.adm.tver.ru',
-            proto: 'https://',
-            port: 443,
-            user: 'web',
-            password: 'web'
-        }
+        title: 'Video',
+        hls: 'https://video.adm.tver.ru/hls/27aec28e-6181-4753-9acd-0456a75f0289/0/index.m3u8'
     });
 }
