@@ -9,7 +9,6 @@ export default (options) => {
     const defaultOption = {
         container: options.element || document.getElementsByClassName('lineplayer')[0],
         autoplay: false,
-        title: true,
         theme: '#b7daff',
         lang: (navigator.language || navigator.browserLanguage).toLowerCase().split('-')[0],
         screenshot: true,

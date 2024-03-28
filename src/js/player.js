@@ -1,4 +1,4 @@
-import './lineplayer.scss';
+import Promise from 'promise-polyfill';
 
 import { isMobile } from './utils';
 import handleOption from './options';
@@ -27,7 +27,7 @@ class LinePlayer {
      * @param {Object} options - See README
      * @constructor
      */
-    constructor (options) {
+    constructor(options) {
         this.options = handleOption(options);
 
         this.tran = new i18n(this.options.lang).tran;
@@ -106,7 +106,7 @@ class LinePlayer {
                 this.options[type].forEach(server => {
                     servers.load(type, server).then((cameras) => {
                         this.cameras = this.cameras.concat(cameras);
-                        if(this.cameras && !played) {
+                        if(this.cameras.length > 0 && !played) {
                             played = true;
                             setTimeout(() => {
                                 this.switchVideo(0);
@@ -193,9 +193,9 @@ class LinePlayer {
             var paused = this.video.paused;
             if (!paused) this.pause();
 
-            this.video.poster = this.cameras[channel].image;
+            if(this.cameras[channel].image) this.video.poster = this.cameras[channel].image;
             this.url = this.cameras[channel].quality[quality].url;
-            this.title(this.cameras[channel].name);
+            if(this.cameras[channel].name) this.title(this.cameras[channel].name);
 
             this.controller.initQualityButton(this.cameras[channel].quality, quality);
             if (this.cameras.length > 1) {
@@ -211,7 +211,7 @@ class LinePlayer {
     /**
      * Play video
      */
-    play () {
+    play (fromNative) {
         this.paused = false;
         if (this.video.paused) {
             this.bezel.switch(this.icons.get('play'));
@@ -225,7 +225,14 @@ class LinePlayer {
 
         this.controller.initPlayButton('Pause', 'pause');
 
-        this.video.play();
+        if (!fromNative) {
+            const playedPromise = Promise.resolve(this.video.play());
+            playedPromise
+                .catch(() => {
+                    this.pause();
+                })
+                .then(() => {});
+        }
         this.container.classList.add('lineplayer-playing');
 
         this.template.liveBadge.style.display = 'inline-block';
@@ -242,7 +249,7 @@ class LinePlayer {
     /**
      * Pause video
      */
-    pause () {
+    pause (fromNative) {
         this.paused = true;
         if (!this.video.paused) {
             this.bezel.switch(this.icons.get('pause'));
@@ -262,7 +269,9 @@ class LinePlayer {
 
         this.controller.initPlayButton('Play', 'play');
 
-        this.video.pause();
+        if (!fromNative) {
+            this.video.pause();
+        }
         this.container.classList.remove('lineplayer-playing');
 
         this.template.liveBadge.style.display = 'none';
@@ -366,4 +375,4 @@ class LinePlayer {
     }
 }
 
-module.exports = LinePlayer;
+export default LinePlayer;

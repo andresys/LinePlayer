@@ -1,15 +1,15 @@
-/* eslint-disable no-undef */
 const path = require('path');
 const webpack = require('webpack');
-const GitRevisionPlugin = require('git-revision-webpack-plugin');
+const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
 const gitRevisionPlugin = new GitRevisionPlugin();
 
 module.exports = {
+    mode: 'development',
 
     devtool: 'cheap-module-source-map',
 
     entry: {
-        'LinePlayer': './src/index.js'
+        'LinePlayer': './src/js/index.js'
     },
 
     output: {
@@ -17,13 +17,24 @@ module.exports = {
         filename: '[name].js',
         library: '[name]',
         libraryTarget: 'umd',
+        libraryExport: 'default',
         umdNamedDefine: true,
-        publicPath: '/'
+        publicPath: '/',
     },
 
     resolve: {
         modules: ['node_modules'],
-        extensions: ['.js', '.scss']
+        extensions: ['.js', '.less'],
+        fallback: {
+            dgram: false,
+            fs: false,
+            net: false,
+            tls: false,
+            buffer: false,
+            crypto: false,
+            util: false,
+            stream: false
+        },
     },
 
     module: {
@@ -31,84 +42,63 @@ module.exports = {
         rules: [
             {
                 test: /\.js$/,
-                enforce: 'pre',
-                loader: require.resolve('eslint-loader'),
-                include: path.resolve(__dirname, '../src'),
-            },
-            {
-                test: /\.js$/,
                 use: [
                     {
-                        loader: require.resolve('babel-loader'),
+                        loader: 'babel-loader',
                         options: {
                             cacheDirectory: true,
-                            presets: ['env']
-                        }
-                    }
-                ]
+                            presets: ['@babel/preset-env'],
+                        },
+                    },
+                ],
             },
             {
-                test: /\.scss$/,
+                test: /\.less$/,
                 use: [
-                    require.resolve('style-loader'),
+                    'style-loader',
                     {
-                        loader: require.resolve('css-loader'),
+                        loader: 'css-loader',
                         options: {
-                            importLoaders: 1
-                        }
+                            importLoaders: 1,
+                        },
                     },
                     {
-                        loader: require.resolve('postcss-loader'),
+                        loader: 'postcss-loader',
                         options: {
-                            config: {
-                                path: path.join(__dirname, 'postcss.config.js')
-                            }
-                        }
+                            postcssOptions: {
+                                plugins: ['postcss-preset-env'],
+                            },
+                        },
                     },
-                    require.resolve('sass-loader')
-                ]
+                    'less-loader',
+                ],
             },
             {
                 test: /\.(png|jpg)$/,
-                loader: require.resolve('url-loader'),
+                loader: 'url-loader',
                 options: {
-                    'limit': 40000
+                    limit: 40000,
                 }
             }
         ]
     },
 
     devServer: {
-        compress: true,
-        contentBase: path.resolve(__dirname, '..', 'demo'),
-        clientLogLevel: 'none',
-        quiet: false,
-        open: true,
-        historyApiFallback: {
-            disableDotRule: true
+        static: {
+            directory: path.join(__dirname, '..', 'demo'),
         },
-        watchOptions: {
-            ignored: /node_modules/
-        }
+        compress: true,
+        open: true,
     },
 
     plugins: [
-        new webpack.NamedModulesPlugin(),
         new webpack.DefinePlugin({
             LINEPLAYER_VERSION: `"${require('../package.json').version}"`,
             GIT_HASH: JSON.stringify(gitRevisionPlugin.version())
         })
     ],
 
-    node: {
-        dgram: 'empty',
-        fs: 'empty',
-        net: 'empty',
-        tls: 'empty'
-    },
-
     performance: {
         hints: false
     }
-
 };

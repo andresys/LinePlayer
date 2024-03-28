@@ -35,8 +35,8 @@ class Template {
         return `
         <div class="lineplayer-mask"></div>
         <div class="lineplayer-video-wrap">
-            ${this.tplVideo(true, undefined, options.screenshot, undefined)}
-            ${options.title ? '<div class="lineplayer-title"></div>' : ''}
+            ${this.tplVideo(true, options.screenshot)}
+            ${options.title ? `<div class="lineplayer-title">${options.title}</div>` : ''}
             ${options.logo ? `<div class="lineplayer-logo"><img src="${options.logo}"></div>` : ''}
 
             <div class="lineplayer-bezel">
@@ -123,6 +123,7 @@ class Template {
     }
 
     tplCameraPreview (name, icon, options) {
+        console.log(options)
         var image = options['image'],
             description = options['description'];
 
@@ -172,9 +173,9 @@ class Template {
             </div>`;
     }
 
-    tplVideo (current, pic, screenshot, url) {
+    tplVideo (current, screenshot) {
         return `
-        <video class="lineplayer-video ${current ? 'lineplayer-video-current"' : ''}" ${pic ? `poster="${pic}"` : ''} webkit-playsinline playsinline ${screenshot ? 'crossorigin="anonymous"' : ''} src="${url}">
+        <video class="lineplayer-video ${current ? 'lineplayer-video-current"' : ''}" webkit-playsinline playsinline ${screenshot ? 'crossorigin="anonymous"' : ''}>
          </video>`;
     }
 }
