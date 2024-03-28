@@ -7,7 +7,8 @@ function initPlayers () {
         container: document.getElementById('lineplayer'),
         volume: false,
         screenshot: true,
-        title: 'Video',
+        autoplay: true,
+        title: 'Видео',
         hls: 'https://video.adm.tver.ru/hls/27aec28e-6181-4753-9acd-0456a75f0289/0/index.m3u8'
     });
 }
